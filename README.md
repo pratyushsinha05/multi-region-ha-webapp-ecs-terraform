@@ -97,9 +97,8 @@ Security Groups and NACLs: Configure security groups and network ACLs to control
 Deployment Pipeline Integration: Integrate ECS deployments into your CI/CD pipeline for automated deployment of microservices. You can use AWS CodePipeline, Jenkins, or other CI/CD tools to build, test, and deploy Docker images to ECS clusters.
 
 
-Amazon ECS Clusters:
-hcl
-Copy code
+1. **Amazon ECS Clusters**:
+```hcl
 module "ecs_clusters" {
   source     = "terraform-aws-modules/ecs/aws"
   version    = "~> 2.0"
@@ -108,9 +107,10 @@ module "ecs_clusters" {
   subnets    = ["subnet-123456", "subnet-789012"]
   security_groups = ["sg-123456"]
 }
-Task Definitions:
-hcl
-Copy code
+```
+
+2. **Task Definitions**:
+```hcl
 resource "aws_ecs_task_definition" "my_microservice_task" {
   family                   = "my-microservice"
   container_definitions    = file("task_definitions/my_microservice.json")
@@ -120,9 +120,10 @@ resource "aws_ecs_task_definition" "my_microservice_task" {
   network_mode             = "awsvpc"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
 }
-Service Definitions:
-hcl
-Copy code
+```
+
+3. **Service Definitions**:
+```hcl
 resource "aws_ecs_service" "my_microservice_service" {
   name            = "my-microservice-service"
   cluster         = module.ecs_clusters.cluster_id
@@ -134,17 +135,19 @@ resource "aws_ecs_service" "my_microservice_service" {
     security_groups = ["sg-123456"]
   }
 }
-Integration with ELB:
-hcl
-Copy code
+```
+
+4. **Integration with ELB**:
+```hcl
 resource "aws_lb_target_group_attachment" "ecs_attachment" {
   target_group_arn = aws_lb_target_group.my_target_group.arn
   target_id        = aws_ecs_service.my_microservice_service.id
   port             = 80
 }
-Auto Scaling:
-hcl
-Copy code
+```
+
+5. **Auto Scaling**:
+```hcl
 resource "aws_appautoscaling_target" "ecs_service_target" {
   service_namespace  = "ecs"
   resource_id        = "service/${aws_ecs_service.my_microservice_service.cluster}/${aws_ecs_service.my_microservice_service.name}"
@@ -152,9 +155,10 @@ resource "aws_appautoscaling_target" "ecs_service_target" {
   min_capacity       = 1
   max_capacity       = 10
 }
-Logging and Monitoring:
-hcl
-Copy code
+```
+
+6. **Logging and Monitoring**:
+```hcl
 resource "aws_cloudwatch_log_group" "ecs_logs" {
   name = "/ecs/my-microservice"
 }
@@ -179,16 +183,18 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_alarm" {
     ClusterName = module.ecs_clusters.cluster_name
   }
 }
-IAM Roles:
-hcl
-Copy code
+```
+
+7. **IAM Roles**:
+```hcl
 resource "aws_iam_role_policy_attachment" "ecs_task_policy_attachment" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = aws_iam_policy.ecs_task_policy.arn
 }
-Security Groups and NACLs: (Assuming security groups and NACLs are already defined)
-hcl
-Copy code
+```
+
+8. **Security Groups and NACLs**: (Assuming security groups and NACLs are already defined)
+```hcl
 resource "aws_security_group_rule" "ecs_ingress" {
   type        = "ingress"
   from_port   = 80
@@ -197,9 +203,10 @@ resource "aws_security_group_rule" "ecs_ingress" {
   cidr_blocks = ["0.0.0.0/0"]
   security_group_id = aws_security_group.ecs_security_group.id
 }
-Deployment Pipeline Integration: (Assuming integration with AWS CodePipeline)
-hcl
-Copy code
+```
+
+9. **Deployment Pipeline Integration**: (Assuming integration with AWS CodePipeline)
+```hcl
 resource "aws_codepipeline" "ecs_pipeline" {
   name     = "ecs-pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
@@ -246,3 +253,6 @@ resource "aws_codepipeline" "ecs_pipeline" {
     }
   }
 }
+```
+
+These code snippets illustrate how you can integrate Amazon ECS clusters for microservices into your existing Terraform infrastructure. Each snippet represents a specific aspect of the implementation, from defining ECS clusters and services to configuring auto-scaling, logging, monitoring, and integration with deployment pipelines.
